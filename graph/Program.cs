@@ -51,6 +51,16 @@ namespace ConsoleApp16
             Console.WriteLine("DFS traversal starting from vertex 2:");
             graph.DFS(2);
 
+            Thread.Sleep(5000);
+
+            BinaryTree tree = new BinaryTree();
+            tree.root = new Node(1);
+            tree.root.left = new Node(2);
+            tree.root.right = new Node(3);
+            tree.root.left.left = new Node(4);
+            tree.root.left.right = new Node(5);
+            tree.Inorder();
+
             Console.ReadLine();
 
 
@@ -231,5 +241,47 @@ namespace ConsoleApp16
             }
         }
 
+    }
+
+    public class Node
+    {
+        public int data;
+        public Node left, right;
+        public Node(int item)
+        {
+            data = item;
+            left = right = null;
+        }
+    }
+
+    public class BinaryTree
+    {
+        public Node root;
+        public virtual void Inorder()
+        {
+            if (root == null)
+                return;
+
+            Stack<Node> st = new Stack<Node>();
+            Node curr = root;
+
+           while(curr != null || st.Count > 0)
+            {
+                while(curr != null)
+                {
+                    st.Push(curr);
+                    curr = curr.left;
+                }
+            }
+
+            curr = st.Pop();
+            Console.Write(curr.data + "Inorder" + " ");
+            curr = curr.right;
+
+
+
+
+        }
+           
     }
 }
