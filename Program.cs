@@ -1,197 +1,287 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
-namespace Codepractice
+//refer other graph algo at 
+//https://www.programiz.com/dsa/graph-dfs
+namespace ConsoleApp16
 {
-    public class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            //int[] inputArr = { 5, 3, -1, 6, 2, -4, 12, 9 };
-            //int[] result = SumOfTwoNumbers(inputArr, 11);
+            int V = 5;
+            Graph g = new Graph(5);
+            g.AddEdge(0, 1);
+            g.AddEdge(0, 4);
+            g.AddEdge(1,2);
+            g.AddEdge(1,3);
+            g.AddEdge(1,4);
+            g.AddEdge(2,3);
+            g.AddEdge(3,4);
+            g.PrintList();
 
-            //int[] inputArr = { 12, 3, 1, 2, -6, 5, -8, 6 };
-            //ArrayList result = SumOfThreeNumbers(inputArr, 0);
+            Thread.Sleep(5000);
 
-            //int[] arr1 = { -1, 5, 10, 28, 3 };
-            //int[] arr2 = { 26, 134, 135, 15, 17 };
-            //int[] result = SmallestDifference(arr1, arr2);
-            int[] arr = { 10, 20, 30, 40, 50 };
-            int[] result = RotateArray(arr);
-            int fibNum = GetnthFib(20);
-            Console.WriteLine(fibNum);
-            int[] arr1 = { 10, 30, 35, 40, 50, 55, 60, 75, 80, 85, 90 };
-            int pos = GetPositionByBinarySearch(arr1, 60);
-            Console.WriteLine(pos);
-            Console.Read();
+            GraphAsMatrix g1 = new GraphAsMatrix(5);
+
+            g1.AddEdge(0, 1);
+            g1.AddEdge(0, 4);
+            g1.AddEdge(1, 2);
+            g1.AddEdge(1, 3);
+            g1.AddEdge(1, 4);
+            g1.AddEdge(2, 3);
+            g1.AddEdge(3, 4);
+            g1.PrintGraph();
+
+            Thread.Sleep(5000);
+
+            GraphTraval graph = new GraphTraval(4);
+            graph.AddEdge(0, 1);
+            graph.AddEdge(0, 2);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+            graph.AddEdge(2, 3);
+            graph.AddEdge(3, 3);
+            //Print adjacency matrix
+            graph.PrintAdjacecnyMatrix();
+
+            Console.WriteLine("BFS traversal starting from vertex 2:");
+            graph.BFS(2);
+            Console.WriteLine("DFS traversal starting from vertex 2:");
+            graph.DFS(2);
+
+            Thread.Sleep(5000);
+
+            BinaryTree tree = new BinaryTree();
+            tree.root = new Node(1);
+            tree.root.left = new Node(2);
+            tree.root.right = new Node(3);
+            tree.root.left.left = new Node(4);
+            tree.root.left.right = new Node(5);
+            tree.Inorder();
+
+            Console.ReadLine();
+
+
         }
 
-        static int[] SumOfTwoNumbers(int[] arr,int sum)
-        {
-            Array.Sort(arr);
-            int left = 0;
-            int right = arr.Length - 1;
 
-            while(left < right)
+
+       
+    }
+
+    public class Graph
+    {
+        int v;
+        List<List<int>> adjList;
+
+        public Graph(int V)
+        {
+            v = V;
+            adjList = new List<List<int>>(V);
+            for(int i = 0;i < V;i++)
             {
-                int checkSum = arr[left] + arr[right];
-                if(checkSum == sum)
+                adjList.Add(new List<int>());
+            }
+
+        }
+
+        public void AddEdge(int u,int v)
+        {
+            adjList[u].Add(v);
+            adjList[v].Add(u);
+        }
+
+        public void PrintList()
+        {
+            for(int i =0;i<adjList.Count;i++)
+            {
+                Console.WriteLine("Adjestary List of i is " +  i);
+                for(int j = 0;j < adjList[i].Count;j++)
                 {
-                    return new int[] { arr[left], arr[right] };
+                    Console.WriteLine(adjList[i][j] + " ");
                 }
-                else if(checkSum > sum)
+                Console.WriteLine();
+            }
+        }
+
+    }
+
+    public class GraphAsMatrix
+    {
+        int v;
+        int[,] matrix;
+
+        public GraphAsMatrix(int V)
+        {
+            v = V;
+            matrix = new int[V, V];
+
+        }
+
+        public void AddEdge(int source, int dest)
+        {
+            matrix[source, dest] = 1;
+            matrix[dest, source] = 1;
+        }
+
+        public void PrintGraph()
+        {
+            Console.WriteLine("Graph: (Adjacency Matrix)");
+            for (int i = 0; i < v; i++)
+            {
+                for (int j = 0; j < v; j++)
                 {
-                    right--;
+                    Console.WriteLine(matrix[i, j] + " ");
                 }
-                else
+                Console.WriteLine();
+            }
+            for (int i = 0; i < v; i++)
+            {
+                Console.WriteLine("Vertex " + i + " is connected to:");
+                for (int j = 0; j < v; j++)
                 {
-                    left++;
+                    if (matrix[i, j] == 1)
+                    {
+                        Console.WriteLine(j + " ");
+                    }
+                }
+                Console.WriteLine();
+            }
+
+        }
+    }
+
+    public class GraphTraval
+    {
+        int v;
+        List<List<int>> adjList;
+        /* Example : vertices=4
+        *      0->[1,2]
+        *      1->[2]
+        *      2->[0,3]
+        *      3->[]
+        */
+        public GraphTraval(int V)
+        {
+            v = V;
+            adjList = new List<List<int>>(V);
+            for (int i = 0; i < V; i++)
+            {
+                adjList.Add(new List<int>());
+            }
+        }
+
+        public void AddEdge(int source, int dest)
+        {
+            adjList[source].Add(dest);
+            adjList[source].Add(dest);
+        }
+
+        public void DFS(int start)
+        {
+            bool[] visited = new bool[v];
+            Stack<int> st = new Stack<int>();
+            visited[start] = true;
+            st.Push(start);
+            while(st.Count > 0)
+            {
+                start = st.Pop();
+                Console.WriteLine("next-->"  + start);
+                foreach (int i in adjList[start])
+                {
+                    if(!visited[i])
+                    {
+                        visited[i] = true;
+                        st.Push(i);
+                    }
                 }
 
             }
-            return new int[0];
+
+
         }
 
-        static ArrayList SumOfThreeNumbers(int[] arr,int sum)
+        public void BFS(int start)
         {
-            
-            Array.Sort(arr);
-            ArrayList arrLst = new ArrayList();
-            for(int i=0;i<= arr.Length - 1;i++)
+            bool[] visited = new bool[v];
+            Queue<int> q = new Queue<int>();
+            visited[start] = true;
+            q.Enqueue(start);
+            while(q.Count > 0)
             {
-                int left = i + 1;
-                int right = arr.Length - 1;
-                while(left < right)
+                start = q.Dequeue();
+                Console.WriteLine("next-->" + start);
+                foreach(int next in adjList[start])
                 {
-                    int checkSum = arr[i] + arr[left] + arr[right];
-                    if(checkSum == sum)
+                    if(!visited[next])
                     {
-                         int[] ans =  { arr[i], arr[left], arr[right] };
-                        arrLst.Add(ans);
-                        left++;
-                        right--;
-                       
-                    }
-                    else if(checkSum > sum)
-                    {
-                        right--;
-                    }
-                    else
-                    {
-                        left++;
+                        visited[next] = true;
+                        q.Enqueue(next);
                     }
                 }
-                
             }
-            return arrLst;
         }
 
-        static int[] SmallestDifference(int[] arr1,int[] arr2)
+        public void PrintAdjacecnyMatrix()
         {
+            for (int i = 0; i < v; i++)
+            {
+                Console.Write(i + ":[");
+                string s = "";
+                foreach (var k in adjList[i])
+                {
+                    s = s + (k + ",");
+                }
+                s = s.Substring(0, s.Length - 1);
+                s = s + "]";
+                Console.Write(s);
+                Console.WriteLine();
+            }
+        }
+
+    }
+
+    public class Node
+    {
+        public int data;
+        public Node left, right;
+        public Node(int item)
+        {
+            data = item;
+            left = right = null;
+        }
+    }
+
+    public class BinaryTree
+    {
+        public Node root;
+        public virtual void Inorder()
+        {
+            if (root == null)
+                return;
+
+            Stack<Node> st = new Stack<Node>();
+            Node curr = root;
+
+           while(curr != null || st.Count > 0)
+            {
+                while(curr != null)
+                {
+                    st.Push(curr);
+                    curr = curr.left;
+                }
+            }
+
+            curr = st.Pop();
+            Console.Write(curr.data + "Inorder" + " ");
+            curr = curr.right;
+
+
+
+
+        }
            
-            Array.Sort(arr1);
-            Array.Sort(arr2);
-            int first = 0;
-            int second = 0;
-            int current = int.MaxValue;
-            int small = int.MaxValue;
-            int[] result = new int[2];
-            while(first < arr1.Length && second < arr1.Length)
-            {
-                int num1 = arr1[first];
-                int num2 = arr2[second];
-                if(num1 < num2)
-                {
-                    current = num2 - num1;
-                    first++;
-                }
-                else if(num1 > num2)
-                {
-                    current = num1 - num2;
-                    second++;
-                }
-                else
-                {
-                    return new int[] { num1, num2 };
-                }
-                if(small >current)
-                {
-                    small = current;
-                    result = new int[] { num1, num2 };
-                }
-            }
-
-            return result;
-        }
-
-        static int[] RotateArray(int[] arr)
-        {
-            int[] temp = new int[arr.Length];
-            for(int i =0 ;i <arr.Length;i++)
-            {
-                if(i == arr.Length -1)
-                {
-                    temp[0] = arr[i];
-                }
-                else
-                {
-
-                    temp[i + 1] = arr[i];
-
-                }
-            }
-            return temp;
-        }
-
-        static int GetnthFib(int n)
-        {
-            int[] lastNums = { 0, 1 };
-            int count = 3;
-            while(count <= n)
-            {
-                int nextNum = lastNums[0] + lastNums[1];
-                lastNums[0] = lastNums[1];
-                lastNums[1] = nextNum;
-                count++;
-            }
-
-            if (n > 1)
-                return lastNums[1];
-            else
-                return lastNums[0];
-        }
-
-        public static int GetPositionByBinarySearch(int[] arr,int target)
-        {
-            Array.Sort(arr);
-            int left = 0;
-            int right = arr.Length - 1;
-            while(left <= right)
-            { 
-            int mid = (left + right) / 2;
-            int possibleMatch = arr[mid];
-                if(possibleMatch == target )
-                {
-                    return mid;
-                }
-                else if(target < possibleMatch )
-                {
-                    right = mid - 1;
-                }
-                else
-                {
-                    left = mid + 1;
-                }
-
-
-            }
-
-            return -1;
-
-        }
-
-
-
     }
 }
