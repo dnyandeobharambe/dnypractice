@@ -10,6 +10,7 @@ namespace ConsoleApp16
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Graph AdjList  ");
             int V = 5;
             Graph g = new Graph(5);
             g.AddEdge(0, 1);
@@ -35,7 +36,7 @@ namespace ConsoleApp16
             g1.PrintGraph();
 
             Thread.Sleep(5000);
-
+            Console.WriteLine("Graph AdjMatrix  ");
             GraphTraval graph = new GraphTraval(4);
             graph.AddEdge(0, 1);
             graph.AddEdge(0, 2);
@@ -53,6 +54,7 @@ namespace ConsoleApp16
 
             Thread.Sleep(5000);
 
+            Console.WriteLine("Tree InOrder input as 1 2 3 4 5  ");
             BinaryTree tree = new BinaryTree();
             tree.root = new Node(1);
             tree.root.left = new Node(2);
@@ -61,7 +63,43 @@ namespace ConsoleApp16
             tree.root.left.right = new Node(5);
             tree.Inorder();
 
+           
+
+            Thread.Sleep(5000);
+            Console.WriteLine("PreOrder input 10 8 2 3 5 2");
+            //BinaryTree tree1 = new BinaryTree();
+            tree.root = new Node(10);
+            tree.root.left = new Node(8);
+            tree.root.right = new Node(2);
+            tree.root.left.left = new Node(3);
+            tree.root.left.right = new Node(5);
+            tree.root.right.left = new Node(2);
+            tree.PreOrder();
+
+            Thread.Sleep(5000);
+            Console.WriteLine("PostOrder input 10 8 2 3 5 2");
+            //BinaryTree tree1 = new BinaryTree();
+            tree.root = new Node(10);
+            tree.root.left = new Node(8);
+            tree.root.right = new Node(2);
+            tree.root.left.left = new Node(3);
+            tree.root.left.right = new Node(5);
+            tree.root.right.left = new Node(2);
+            tree.PostOrder();
+
+            Thread.Sleep(5000);
+
+            Node root = new Node(1);
+            root.left = new Node(2);
+            root.right = new Node(3);
+            root.left.left = new Node(4);
+            root.left.right = new Node(5);
+            root.right.right = new Node(6);
+
+            tree.LevelOrder(root);
+
             Console.ReadLine();
+
 
 
         }
@@ -272,16 +310,95 @@ namespace ConsoleApp16
                     st.Push(curr);
                     curr = curr.left;
                 }
+                curr = st.Pop();
+                Console.WriteLine(curr.data + "Inorder" + " ");
+                curr = curr.right;
             }
 
-            curr = st.Pop();
-            Console.Write(curr.data + "Inorder" + " ");
-            curr = curr.right;
-
-
-
+           
 
         }
+
+        //https://www.geeksforgeeks.org/iterative-preorder-traversal/
            
+
+        public virtual void PreOrder()
+        {
+            if(root == null)
+            {
+                return;
+            }
+            Stack<Node> st = new Stack<Node>();
+            st.Push(root);
+            while(st.Count > 0)
+            {
+                Node curr = st.Peek();
+                Console.Write(curr.data + " ");
+                st.Pop();
+                if(curr.right != null)
+                {
+                    st.Push(curr.right);
+                }
+                if (curr.left != null)
+                {
+                    st.Push(curr.left);
+                }
+            }
+        }
+
+        public virtual void PostOrder()
+        {
+            List<int> res = new List<int>();
+            Stack<Node> st = new Stack<Node>();
+            if (root == null) return;
+            st.Push(root);
+            while(st.Count > 0)
+            {
+               
+                Node curr = st.Pop();
+                res.Insert(0, curr.data);
+                if(curr.left != null)
+                {
+                    st.Push(curr.left);
+                }
+                if(curr.right != null)
+                {
+                    st.Push(curr.right);
+                }
+
+            }
+
+            foreach(int i in res)
+            {
+                Console.WriteLine("Postorder is   " + i);
+            }
+
+        }
+
+        public virtual void LevelOrder(Node root)
+        {
+            if(root == null)
+            {
+                return;
+            }
+
+            Queue<Node> q = new Queue<Node>();
+            q.Enqueue(root);
+            while(q.Count > 0)
+            {
+                Node curr = q.Dequeue();
+                Console.WriteLine("level order is   " + curr.data);
+                if(curr.left != null)
+                {
+                    q.Enqueue(curr.left);
+                }
+                if(curr.right != null)
+                {
+                    q.Enqueue(curr.right);
+                }
+
+            }
+
+        }
     }
 }
